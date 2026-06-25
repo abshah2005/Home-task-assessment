@@ -9,7 +9,7 @@ const { writeLimiter } = require('../middleware/rateLimit.middleware');
 
 const router = Router();
 
-router.post('/', writeLimiter, validateBody(['fromAddress', 'toAddress', 'amount']), addTransaction);
+router.post('/', writeLimiter, validateBody(['fromAddress', 'toAddress', 'amount', 'timestamp', 'signature']), addTransaction);
 router.get('/pending', getPendingTransactions);
 router.get('/all', getAllTransactions);
 

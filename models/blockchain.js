@@ -56,22 +56,26 @@ class Transaction {
       .digest('hex');
   }
 
-  signTransaction(signingKey) {
-    if (signingKey.getPublic('hex') !== this.fromAddress) {
-      throw new Error('You cannot sign transactions for other wallets!');
-    }
-
-    const hashTx = this.calculateHash();
-    const sig = signingKey.sign(hashTx, 'base64');
-    this.signature = sig.toDER('hex');
+  /**
+   * Signs this transaction using the given PEM-encoded private key.
+   * The signature covers fromAddress + toAddress + amount + timestamp.
+   * @param {string} privateKeyPem - PKCS8 PEM private key
+   */
+  signTransaction(privateKeyPem) {
+    const data = Buffer.from(this.fromAddress + this.toAddress + this.amount + this.timestamp);
+    const sig = crypto.sign('SHA256', data, privateKeyPem);
+    this.signature = sig.toString('hex');
   }
 
+  /**
+   * Verifies the transaction signature against the public key (fromAddress).
+   * Mining reward transactions (fromAddress === null) are always valid.
+   * @returns {boolean}
+   */
   isValid() {
     if (this.fromAddress === null) return true;
 
-    if (!this.signature || this.signature.length === 0) {
-      return true;
-    }
+    if (!this.signature || this.signature.length === 0) return false;
 
     try {
       const publicKey = crypto.createPublicKey({
@@ -81,8 +85,8 @@ class Transaction {
       });
 
       return crypto.verify(
-        null,
-        Buffer.from(this.calculateHash()),
+        'SHA256',
+        Buffer.from(this.fromAddress + this.toAddress + this.amount + this.timestamp),
         publicKey,
         Buffer.from(this.signature, 'hex')
       );
@@ -126,6 +130,10 @@ class Blockchain {
   addTransaction(transaction) {
     if (!transaction.fromAddress || !transaction.toAddress) {
       throw new Error('Transaction must include from and to address');
+    }
+
+    if (!transaction.signature || transaction.signature.length === 0) {
+      throw new Error('Transaction must be signed before adding to the chain');
     }
 
     if (!transaction.isValid()) {

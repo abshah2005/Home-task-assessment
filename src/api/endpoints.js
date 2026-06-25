@@ -8,6 +8,7 @@ const ENDPOINTS = {
   TRANSACTIONS_ALL: `${BASE}/transactions/all`,
   MINE: `${BASE}/mine`,
   STATS: `${BASE}/stats`,
+  WALLETS: `${BASE}/wallets`,
   balance: (address) => `${BASE}/balance/${encodeURIComponent(address)}`,
 };
 
