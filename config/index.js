@@ -10,7 +10,7 @@ module.exports = {
     initialMinerAddress: process.env.INITIAL_MINER_ADDRESS || 'genesis-miner',
   },
   demoData: {
-    enabled: process.env.SEED_DEMO_DATA !== 'false',
+    enabled: process.env.SEED_DEMO_DATA === 'true',
     transactions: [
       { from: 'address1', to: 'address2', amount: 100 },
       { from: 'address2', to: 'address1', amount: 50 },

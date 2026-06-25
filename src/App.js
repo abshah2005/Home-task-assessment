@@ -1,16 +1,18 @@
-import React from 'react';
+import { useState } from 'react';
 import './App.css';
 
 import BlockchainViewer from './components/BlockchainViewer';
 import TransactionForm from './components/TransactionForm';
 import StatsPanel from './components/StatsPanel';
 import Header from './components/Header';
+import Wallet from './components/Wallet';
 
 import useBlockchain from './hooks/useBlockchain';
 import { mineBlock } from './api/blockchain.api';
 
 function App() {
   const { chain, stats, loading, error, refresh } = useBlockchain();
+  const [wallet, setWallet] = useState(null);
 
   const handleMine = async () => {
     try {
@@ -42,8 +44,9 @@ function App() {
 
         <div className="main-content">
           <div className="left-panel">
+            <Wallet onWalletGenerated={setWallet} />
             <StatsPanel stats={stats} onMine={handleMine} />
-            <TransactionForm onTransactionAdded={refresh} />
+            <TransactionForm onTransactionAdded={refresh} wallet={wallet} />
           </div>
 
           <div className="right-panel">

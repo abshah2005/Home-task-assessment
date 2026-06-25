@@ -4,7 +4,7 @@ const { isValidAddress, isValidAmount, sanitizeAddress, sanitizeAmount } = requi
 
 const addTransaction = (req, res, next) => {
   try {
-    const { fromAddress, toAddress, amount } = req.body;
+    const { fromAddress, toAddress, amount, timestamp, signature } = req.body;
 
     if (!isValidAddress(fromAddress) || !isValidAddress(toAddress)) {
       return sendError(res, 'Invalid wallet address format', 400);
@@ -19,6 +19,11 @@ const addTransaction = (req, res, next) => {
       sanitizeAddress(toAddress),
       sanitizeAmount(amount)
     );
+
+    // Use the client-supplied timestamp and signature so the signature
+    // is verifiable against the same data that was signed on the frontend.
+    transaction.timestamp = Number(timestamp);
+    transaction.signature = String(signature);
 
     blockchain.addTransaction(transaction);
 

@@ -50,6 +50,19 @@
   color: #991b1b;
 }
 
+.form-notice {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.input-readonly {
+  background: #f9fafb !important;
+  color: #6b7280 !important;
+  cursor: default;
+}
+
 .submit-button {
   width: 100%;
   padding: 15px;
