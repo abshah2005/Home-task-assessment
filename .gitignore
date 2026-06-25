@@ -4,3 +4,4 @@
 .env
 *.log
 npm-debug.log*
+blockchain.json
